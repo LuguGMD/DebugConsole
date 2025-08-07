@@ -28,19 +28,31 @@ namespace Lugu.Utils.Debug
         protected override void Awake()
         {
             base.Awake();
-            
-            for (int i = 0; i < m_debugGroups.Count; i++)
-            {
-                DebugGroup group = m_debugGroups[i];
-                m_groupStatus[DebugUtil.CleanText(group.name)] = group.isEnabled;
-            }
 
+
+            UpdateDebugGroups();
         }
 
         public bool HasGroup(string groupName)
         {
             m_groupStatus.TryGetValue(groupName, out bool isEnabled);
             return isEnabled;
+        }
+
+        [ContextMenu("Update Groups")]
+        public void UpdateDebugGroups()
+        {
+            UnityEngine.Debug.Log("Updating Debug Groups...");
+
+            for (int i = 0; i < m_debugGroups.Count; i++)
+            {
+                DebugGroup group = m_debugGroups[i];
+                m_groupStatus[DebugUtil.CleanText(group.name)] = group.isEnabled;
+            }
+
+            DebugUtil.Log("Debug Groups Updated", "Debug1");
+            DebugUtil.Log("Debug Groups Updated", DebugUtil.WarningStyle,"Debug2");
+
         }
 
     }
