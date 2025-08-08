@@ -1,5 +1,21 @@
 {
   "dependencies": {
+    "com.lugu.debugutils": {
+      "version": "file:com.lugu.debugutils",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.lugu.utils": "1.0.0"
+      }
+    },
+    "com.lugu.utils": {
+      "version": "file:com.lugu.utils",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.lugu.debugutils": "1.0.0"
+      }
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.5",
       "depth": 0,

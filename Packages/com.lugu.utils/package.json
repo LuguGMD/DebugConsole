@@ -1,0 +1,16 @@
+{
+    "name": "com.lugu.utils",
+    "version": "1.0.0",
+    "displayName": "Lugu Utils",
+    "description": "A set of scripts to facilitate the development of your game",
+    "unity": "2019.1",
+    "dependencies": {
+        "com.lugu.debugutils": "1.0.0"
+    },
+    "author": {
+      "name": "Lugu",
+      "email": "lugo.bhz@gmail.com"
+    }
+  }
+  
+  

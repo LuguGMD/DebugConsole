@@ -44,10 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39da61310996c6d4fabf20fa4a54dd35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_debugGroups: []
-  m_soundEffects:
-  - clip: {fileID: 0}
-  - clip: {fileID: 0}
-  - clip: {fileID: 0}
-  - clip: {fileID: 0}
-  - clip: {fileID: 0}
+  m_debugGroups:
+  - name: Combate
+    isEnabled: 1
+  - name: Inimigo
+    isEnabled: 1
+  - name: Teste
+    isEnabled: 1

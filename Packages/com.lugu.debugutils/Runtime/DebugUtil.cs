@@ -177,7 +177,7 @@ namespace Lugu.Utils.Debug
 
         private static object ApplyStyle(object message, DebugStyle style)
         {
-            return $"<color=#{style.color.ToHexString()}><size={style.size}>{message}</color=#{style.color.ToHexString()}></size={style.size}>";
+            return $"<color=#{ColorUtility.ToHtmlStringRGB(style.color)}><size={style.size}>{message}</color=#{ColorUtility.ToHtmlStringRGB(style.color)}></size={style.size}>";
         }
 
     }
