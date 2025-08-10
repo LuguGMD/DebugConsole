@@ -1,16 +1,13 @@
 {
-    "name": "com.lugu.debugutils",
-    "version": "1.0.0",
-    "displayName": "Debug Utils",
-    "description": "This is an to help you Debug and Test your game",
-    "unity": "2019.1",
-    "dependencies": {
-        "com.lugu.utils": "1.0.0"
-    },
-    "author": {
-      "name": "Lugu",
-      "email": "lugo.bhz@gmail.com"
-    }
+  "name": "com.lugu.debugutils",
+  "version": "1.0.0",
+  "displayName": "Debug Utils",
+  "description": "This is an to help you Debug and Test your game",
+  "unity": "2019.1",
+  "author": {
+    "name": "Lugu",
+    "email": "lugo.bhz@gmail.com"
+  },
+  "dependencies": {
   }
-  
-  
+}
