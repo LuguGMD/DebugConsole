@@ -1,0 +1,13 @@
+{
+  "name": "com.lugu.console",
+  "version": "1.0.0",
+  "displayName": "Console",
+  "description": "This is a Tool that adds a Console to the Unity runtime",
+  "unity": "2019.1",
+  "author": {
+    "name": "Lugu",
+    "email": "lugo.bhz@gmail.com"
+  },
+  "dependencies": {
+  }
+}

@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.lugu.console": {
+      "version": "file:com.lugu.console",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.lugu.debugutils": {
       "version": "file:com.lugu.debugutils",
       "depth": 0,
