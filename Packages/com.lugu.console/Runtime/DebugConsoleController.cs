@@ -266,8 +266,6 @@ namespace Lugu.Console
                     types[i] = parameters[i].ParameterType;
                 }
 
-                Debug.Log(attribute.commandID);
-
                 DebugCommand debugCommand = new DebugCommand(
                     attribute.commandID,
                     attribute.commandDescription,
