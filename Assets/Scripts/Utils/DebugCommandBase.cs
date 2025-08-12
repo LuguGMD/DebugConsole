@@ -1,36 +1,32 @@
 using UnityEngine;
 
-public abstract class DebugCommandBase
+
+namespace Lugu.Console
 {
-    private string m_commandID;
-    private string m_commandDescription;
-    private string m_commandFormat;
-
-    #region Properties
-
-    public string commandID
+    public abstract class DebugCommandBase
     {
-        get { return m_commandID; }
-        private set { m_commandID = value; }
-    }
+        private string m_commandID;
+        private string m_commandDescription;
 
-    public string commandDescription
-    {
-        get { return m_commandDescription; }
-        private set { m_commandDescription = value; }
-    }
+        #region Properties
 
-    public string commandFormat
-    {
-        get { return m_commandFormat; }
-        private set { m_commandFormat = value; }
-    }
-    #endregion
+        public string commandID
+        {
+            get { return m_commandID; }
+            private set { m_commandID = value; }
+        }
 
-    public DebugCommandBase(string commandID, string commandDescription, string commandFormat)
-    {
-        m_commandID = commandID;
-        m_commandDescription = commandDescription;
-        m_commandFormat = commandFormat;
+        public string commandDescription
+        {
+            get { return m_commandDescription; }
+            private set { m_commandDescription = value; }
+        }
+        #endregion
+
+        public DebugCommandBase(string commandID, string commandDescription)
+        {
+            m_commandID = commandID;
+            m_commandDescription = commandDescription;
+        }
     }
 }
