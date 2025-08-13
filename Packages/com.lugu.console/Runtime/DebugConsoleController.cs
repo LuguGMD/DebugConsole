@@ -1,3 +1,4 @@
+using Codice.CM.Common;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -94,7 +95,8 @@ namespace Lugu.Console
 
         private void Start()
         {
-            GetDebugCommands();
+            if(m_expoxedCommands == null)
+                GetDebugCommands();
         }
 
         private void OnEnable()
@@ -172,6 +174,8 @@ namespace Lugu.Console
 
         private void HandleInput()
         {
+            if (!m_isLoaded) return;
+
             HandleStaticMethod();
 
             if (m_selectedObject.objectValue != null)
@@ -190,13 +194,14 @@ namespace Lugu.Console
 
                 if (parameters[0] == commandBase.commandID)
                 {
-                    if (m_commandList[i] as DebugCommand != null)
+                    if (commandBase as DebugCommand != null)
                     {
-                        object[] parametersObjects = HandleParameters(m_commandList[i] as DebugCommand, parameters);
-                        if (parameters.Length > 1 && parametersObjects == null)
+                        object[] parametersObjects = HandleParameters(commandBase as DebugCommand, parameters);
+                        if ((parameters.Length > 1 || (commandBase as DebugCommand).parameters.Length >= 1) && parametersObjects == null)
                             return;
+                        
 
-                        (m_commandList[i] as DebugCommand).Invoke(this, parametersObjects);
+                        (commandBase as DebugCommand).Invoke(this, parametersObjects);
                     }
                 }
             }
@@ -235,11 +240,14 @@ namespace Lugu.Console
 
             if(parameters.Length-1 != debug.parameters.Length)
             {
+                ErrorMessage($"parameters don't match {debug.commandID}");
                 return null;
             }
 
             for (int i = 1; i < parameters.Length; i++)
             {
+                bool canParse = true;
+
                 string parameterName = debug.parameters[i-1].ToString();
                 parameterName = parameterName.Replace("System.", "");
                 switch (parameterName)
@@ -248,23 +256,32 @@ namespace Lugu.Console
                         parametersObjs.Add(parameters[i]);
                         break;
                     case "Int32":
-                        parametersObjs.Add(int.Parse(parameters[i]));
+                        canParse = int.TryParse(parameters[i], out int valueInt);
+                        if (canParse) parametersObjs.Add(valueInt);
                         break;
                     case "Single":
-                        parametersObjs.Add(float.Parse(parameters[i]));
+                        canParse = float.TryParse(parameters[i], out float valueFloat);
+                        if (canParse) parametersObjs.Add(valueFloat);
                         break;
                     case "Boolean":
-                        parametersObjs.Add(bool.Parse(parameters[i]));
+                        canParse = bool.TryParse(parameters[i], out bool valueBool);
+                        if (canParse) parametersObjs.Add(valueBool);
                         break;
                     default:
-                        Debug.LogWarning($"{debug.commandID} has unsupported parameter: {parameterName}");
+                        ErrorMessage($"{debug.commandID} has unsupported parameter: {parameterName}");
                         break;
                 }
+
+                if(!canParse)
+                {
+                    ErrorMessage($"invalid parameter in {debug.commandID}: {parameterName}");
+                }
+
             }
 
             if (parametersObjs.Count != debug.parameters.Length)
             {
-                Debug.LogWarning($"parameters don't match {debug.commandID}");
+                ErrorMessage($"parameters don't match {debug.commandID}");
                 return null;
             }
 
