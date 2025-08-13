@@ -33,9 +33,6 @@ namespace Lugu.Console
 
         public void Invoke(object obj, params object[] parameters)
         {
-            /*if(m_parameters != null)
-                if(m_parameters.Length > 0)
-                    Debug.Log("Parameter " + m_parameters[0].Name + " " + m_command.Name);*/
             command.Invoke(obj, parameters);
         }
     }

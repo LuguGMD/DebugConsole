@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -12,11 +13,12 @@ namespace Lugu.Console
     {
         private static List<DebugCommandBase> m_commandList = new List<DebugCommandBase>(); //List of static commands
         private static Dictionary<Type, List<DebugCommandBase>> m_classCommands = new Dictionary<Type, List<DebugCommandBase>>();
-        private static List<DebugCommandInfo> m_expoxedCommands = new List<DebugCommandInfo>();
+        private static List<DebugCommandInfo> m_expoxedCommands;
 
         private static bool m_showConsole = false;
         private static bool m_showExtraPanel = false;
         private static string m_input = "";
+        private static bool m_isLoaded = false;
 
         private static string[] m_extraText = new string[0];
 
@@ -127,7 +129,7 @@ namespace Lugu.Console
 
             float y = 0f;
 
-            if(m_showExtraPanel)
+            if (m_showExtraPanel)
             {
                 GUI.Box(new Rect(0, y, Screen.width, EXTRA_PANEL_HEIGHT), "");
 
@@ -151,7 +153,13 @@ namespace Lugu.Console
 
             GUI.Box(new Rect(0, y, Screen.width, 30), "");
             GUI.backgroundColor = new Color(0, 0, 0, 0);
+
             m_input = GUI.TextField(new Rect(10f, y + 5f, Screen.width - 20f, 20f), m_input);
+
+            if (!m_isLoaded)
+            {
+                m_input = "LOADING...";
+            }
 
         }
 
@@ -273,8 +281,14 @@ namespace Lugu.Console
             {
                 m_showConsole = !m_showConsole;
 
-                if(!m_showConsole)
+                if (!m_showConsole)
+                {
                     m_selectedObject.objectValue = null;
+                }
+                else if(m_expoxedCommands == null)
+                {
+                    GetDebugCommands();
+                }
             }
         }
 
@@ -328,32 +342,36 @@ namespace Lugu.Console
 
         #region Starting commands
 
-        private void GetDebugCommands()
+        private async void GetDebugCommands()
         {
+            m_expoxedCommands = new List<DebugCommandInfo>();
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            foreach (Assembly assembly in assemblies)
+            await Task.Run(() =>
             {
-                Type[] types = assembly.GetTypes();
-
-                foreach (Type type in types)
+                foreach (Assembly assembly in assemblies)
                 {
-                    BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
-                    MethodInfo[] members = type.GetMethods(flags);
+                    Type[] types = assembly.GetTypes();
 
-                    foreach (MethodInfo member in members)
+                    foreach (Type type in types)
                     {
-                        DebugMethodAttribute attribute = member.GetCustomAttribute<DebugMethodAttribute>();
+                        BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+                        MethodInfo[] members = type.GetMethods(flags);
 
-                        if (attribute != null)
+                        foreach (MethodInfo member in members)
                         {
-                            m_expoxedCommands.Add(new DebugCommandInfo(member, attribute));
-                        }
+                            DebugMethodAttribute attribute = member.GetCustomAttribute<DebugMethodAttribute>();
 
+                            if (attribute != null)
+                            {
+                                m_expoxedCommands.Add(new DebugCommandInfo(member, attribute));
+                            }
+
+                        }
                     }
                 }
             }
-
+            );
             RegisterCommands();
         }
 
@@ -396,6 +414,9 @@ namespace Lugu.Console
                 }
 
             }
+
+            m_isLoaded = true;
+            m_input = "";
         }
 
         public struct DebugCommandInfo
