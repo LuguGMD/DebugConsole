@@ -3,30 +3,89 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 
 namespace Lugu.Console
 {
     public class DebugConsoleController : MonoBehaviour
     {
-        private List<DebugCommandBase> m_commandList = new List<DebugCommandBase>(); //List of static commands
-        private Dictionary<Type, List<DebugCommandBase>> m_classCommands = new Dictionary<Type, List<DebugCommandBase>>();
-        private List<DebugCommandInfo> m_expoxedCommands = new List<DebugCommandInfo>();
+        private static List<DebugCommandBase> m_commandList = new List<DebugCommandBase>(); //List of static commands
+        private static Dictionary<Type, List<DebugCommandBase>> m_classCommands = new Dictionary<Type, List<DebugCommandBase>>();
+        private static List<DebugCommandInfo> m_expoxedCommands = new List<DebugCommandInfo>();
 
-        [SerializeField] private bool m_showConsole = false;
-        private string m_input = "";
+        private static bool m_showConsole = false;
+        private static bool m_showExtraPanel = false;
+        private static string m_input = "";
+
+        private static string[] m_extraText = new string[0];
 
         [SerializeField] InputActionReference m_consoleInput;
         [SerializeField] InputActionReference m_confirmInput;
 
+        private static object[] m_selectionList;
         private static object m_selectedObject;
 
+        #region Extra Panel
+        private static Vector2 m_scroll;
+
+        private const int EXTRA_PANEL_HEIGHT = 100;
+        private const int EXTRA_PANEL_LABEL_HEIGHT = 20;
+
+        #endregion
+
         #region Properties
+
+        public static object[] selectionList
+        {
+            get { return m_selectionList; }
+            set { m_selectionList = value; }
+        }
 
         public static object selectedObject
         {
             get { return m_selectedObject; }
             set { m_selectedObject = value; }
+        }
+
+        public static List<DebugCommandBase> commandList
+        {
+            get { return m_commandList; }
+            private set { m_commandList = value; }
+        }
+
+        public static Dictionary<Type, List<DebugCommandBase>> classCommands
+        {
+            get { return m_classCommands; }
+            private set { m_classCommands = value; }
+        }
+
+        public static bool showConsole
+        {
+            get { return m_showConsole; }
+            private set { m_showConsole = value; }
+        }
+
+        public static bool showExtraPanel
+        {
+            get { return m_showExtraPanel; }
+            private set { m_showExtraPanel = value; }
+        }
+
+        public static string input
+        {
+            get { return m_input; }
+            private set { m_input = value; }
+        }
+
+        public static string[] extraText
+        {
+            get { return m_extraText; }
+            set
+            {
+                m_extraText = value;
+                m_showExtraPanel = true;
+            }
         }
 
         #endregion
@@ -68,6 +127,28 @@ namespace Lugu.Console
 
             float y = 0f;
 
+            if(m_showExtraPanel)
+            {
+                GUI.Box(new Rect(0, y, Screen.width, EXTRA_PANEL_HEIGHT), "");
+
+                Rect viewport = new Rect(0, 0, Screen.width - 30, 20 * m_extraText.Length);
+
+                m_scroll = GUI.BeginScrollView(new Rect(0, y + 5f, Screen.width, 90), m_scroll, viewport);
+
+                for (int i = 0; i < m_extraText.Length; i++)
+                {
+                    string label = m_extraText[i];
+
+                    Rect labelRect = new Rect(5, EXTRA_PANEL_LABEL_HEIGHT * i, viewport.width - 100, EXTRA_PANEL_LABEL_HEIGHT);
+
+                    GUI.Label(labelRect, label);
+                }
+
+                GUI.EndScrollView();
+
+                y += EXTRA_PANEL_HEIGHT;
+            }
+
             GUI.Box(new Rect(0, y, Screen.width, 30), "");
             GUI.backgroundColor = new Color(0, 0, 0, 0);
             m_input = GUI.TextField(new Rect(10f, y + 5f, Screen.width - 20f, 20f), m_input);
@@ -96,7 +177,7 @@ namespace Lugu.Console
 
                 string[] parameters = m_input.Split(" ");
 
-                if (parameters[0].Contains(commandBase.commandID))
+                if (parameters[0] == commandBase.commandID)
                 {
                     if (m_commandList[i] as DebugCommand != null)
                     {
@@ -122,7 +203,7 @@ namespace Lugu.Console
 
                 string[] parameters = m_input.Split(" ");
 
-                if (parameters[0].Contains(commandBase.commandID))
+                if (parameters[0] == commandBase.commandID)
                 {
                     if (m_commandList[i] as DebugCommand != null)
                     {
@@ -149,24 +230,19 @@ namespace Lugu.Console
             for (int i = 1; i < parameters.Length; i++)
             {
                 string parameterName = debug.parameters[i-1].ToString();
+                parameterName = parameterName.Replace("System.", "");
                 switch (parameterName)
                 {
-                    case "System.String":
+                    case "String":
                         parametersObjs.Add(parameters[i]);
                         break;
-                    case "System.Int32":
+                    case "Int32":
                         parametersObjs.Add(int.Parse(parameters[i]));
                         break;
-                    case "System.Single":
+                    case "Single":
                         parametersObjs.Add(float.Parse(parameters[i]));
                         break;
-                    case "System.Double":
-                        parametersObjs.Add(double.Parse(parameters[i]));
-                        break;
-                    case "System.Char":
-                        parametersObjs.Add(char.Parse(parameters[i]));
-                        break;
-                    case "System.Boolean":
+                    case "Boolean":
                         parametersObjs.Add(bool.Parse(parameters[i]));
                         break;
                     default:
@@ -211,13 +287,34 @@ namespace Lugu.Console
             }
         }
 
-        /*private void SelectObject(object obj)
+        public static void SelectObject(object obj)
         {
-            if(m_classCommands.ContainsKey(obj))
+            if(m_classCommands.ContainsKey(obj.GetType()))
             {
-                m_classCommands = obj;
+                m_selectedObject = obj;
+
+                List<string> objectInfo = new List<string>();
+
+                List<DebugCommandBase> commandsList = m_classCommands[obj.GetType()];
+
+                foreach (DebugCommandBase command in commandsList)
+                {
+                    string text = $"{command.commandID} ";
+                    if (command is DebugCommand)
+                    {
+                        foreach (Type type in (command as DebugCommand).parameters)
+                        {
+                            text += $"/{type.ToString().Replace("System.", "")}/ ";
+                        }
+                    }
+                    text += $" - {command.commandDescription}";
+                    objectInfo.Add(text);
+                }
+
+                extraText = objectInfo.ToArray();
+
             }
-        }*/
+        }
 
         #endregion
 
