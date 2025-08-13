@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace Lugu.Utils.Debug
 {
-
+#if UNITY_EDITOR
     [CustomEditor(typeof(DebugController))]
     public class DebugControllerEditor : Editor
     {
@@ -32,5 +32,5 @@ namespace Lugu.Utils.Debug
             }
         }
     }
-
+#endif
 }
