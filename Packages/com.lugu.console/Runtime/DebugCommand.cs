@@ -34,7 +34,6 @@ namespace Lugu.Console
         public void Invoke(object obj, params object[] parameters)
         {
             command.Invoke(obj, parameters);
-            Debug.Log("Invoked");
         }
     }
 
