@@ -23,8 +23,8 @@ namespace Lugu.Console
         [SerializeField] InputActionReference m_consoleInput;
         [SerializeField] InputActionReference m_confirmInput;
 
-        private static object[] m_selectionList;
-        private static object m_selectedObject;
+        private static SelectObjectInfo[] m_selectionList;
+        private static SelectObjectInfo m_selectedObject = new SelectObjectInfo(null, null);
 
         #region Extra Panel
         private static Vector2 m_scroll;
@@ -36,13 +36,13 @@ namespace Lugu.Console
 
         #region Properties
 
-        public static object[] selectionList
+        public static SelectObjectInfo[] selectionList
         {
             get { return m_selectionList; }
             set { m_selectionList = value; }
         }
 
-        public static object selectedObject
+        public static SelectObjectInfo selectedObject
         {
             get { return m_selectedObject; }
             set { m_selectedObject = value; }
@@ -155,15 +155,18 @@ namespace Lugu.Console
 
         }
 
+        public static void ErrorMessage(params string[] text)
+        {
+            extraText = text;
+        }
+
         #region Handling Console Input
 
         private void HandleInput()
         {
-            if (m_selectedObject == null)
-            {
-                HandleStaticMethod();
-            }
-            else
+            HandleStaticMethod();
+
+            if (m_selectedObject.objectValue != null)
             {
                 HandleMethod();
             }
@@ -193,7 +196,7 @@ namespace Lugu.Console
 
         private void HandleMethod()
         {
-            Type type = m_selectedObject.GetType();
+            Type type = m_selectedObject.objectValue.GetType();
 
             if (!m_classCommands.ContainsKey(type)) return;
 
@@ -205,13 +208,13 @@ namespace Lugu.Console
 
                 if (parameters[0] == commandBase.commandID)
                 {
-                    if (m_commandList[i] as DebugCommand != null)
+                    if (commandBase as DebugCommand != null)
                     {
-                        object[] parametersObjects = HandleParameters(m_commandList[i] as DebugCommand, parameters);
+                        object[] parametersObjects = HandleParameters(commandBase as DebugCommand, parameters);
                         if (parameters.Length > 1 && parametersObjects == null)
                             return;
 
-                        (m_commandList[i] as DebugCommand).Invoke(m_selectedObject, parametersObjects);
+                        (commandBase as DebugCommand).Invoke(m_selectedObject.objectValue, parametersObjects);
                     }
                 }
             }
@@ -271,7 +274,7 @@ namespace Lugu.Console
                 m_showConsole = !m_showConsole;
 
                 if(!m_showConsole)
-                    m_selectedObject = null;
+                    m_selectedObject.objectValue = null;
             }
         }
 
@@ -287,15 +290,20 @@ namespace Lugu.Console
             }
         }
 
-        public static void SelectObject(object obj)
+        public static void SelectObject(DebugConsoleController.SelectObjectInfo selectedObjectInfo)
         {
-            if(m_classCommands.ContainsKey(obj.GetType()))
+            object obj = selectedObjectInfo.objectValue;
+            if (m_classCommands.ContainsKey(obj.GetType()))
             {
-                m_selectedObject = obj;
+                m_selectedObject.name = selectedObjectInfo.name;
+                m_selectedObject.objectValue = obj;
 
                 List<string> objectInfo = new List<string>();
 
                 List<DebugCommandBase> commandsList = m_classCommands[obj.GetType()];
+
+                objectInfo.Add($"{m_selectedObject.name} COMMANDS:");
+                objectInfo.Add("");
 
                 foreach (DebugCommandBase command in commandsList)
                 {
@@ -385,7 +393,6 @@ namespace Lugu.Console
                     }
 
                     m_classCommands[type].Add(debugCommand);
-
                 }
 
             }
@@ -400,6 +407,18 @@ namespace Lugu.Console
             {
                 methodInfo = info;
                 debugMethodAttribute = attribute;
+            }
+        }
+
+        public struct SelectObjectInfo
+        {
+            public string name;
+            public object objectValue;
+
+            public SelectObjectInfo(string name, object objectValue)
+            {
+                this.name = name;
+                this.objectValue = objectValue;
             }
         }
 

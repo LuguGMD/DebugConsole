@@ -80,18 +80,23 @@ namespace Lugu.Console
 
             if (objects.Length == 0)
             {
-                objectsStrings.Add("NO OBJECTS FOUND");
+                DebugConsoleController.ErrorMessage("NO OBJECTS FOUND");
+                return;
             }
             else
             { 
                 objectsStrings.Add("AVAILABLE OBJECTS: ");
                 objectsStrings.Add("");
 
+                DebugConsoleController.selectionList = new DebugConsoleController.SelectObjectInfo[objects.Length];
+
                 for (int i = 0; i < objects.Length; i++)
                 {
                     objectsStrings.Add($"{i} - {objects[i].name}");
+                    DebugConsoleController.selectionList[i].objectValue = objects[i];
+                    DebugConsoleController.selectionList[i].name = objects[i].name;
                 }
-                DebugConsoleController.selectionList = objects;
+                
             }
 
             DebugConsoleController.extraText = objectsStrings.ToArray();
@@ -104,14 +109,15 @@ namespace Lugu.Console
         {
             if(DebugConsoleController.selectionList == null)
             {
-                DebugConsoleController.extraText = new string[] {"Search an Object first"};
+                DebugConsoleController.ErrorMessage("Search an Object first");
             }
             if(DebugConsoleController.selectionList.Length == 0)
             {
-                DebugConsoleController.extraText = new string[] { "Search an Object first" };
+                DebugConsoleController.ErrorMessage("Search an Object first");
             }
 
-            DebugConsoleController.SelectObject(DebugConsoleController.selectionList[index]);
+            DebugConsoleController.SelectObjectInfo selectObjectInfo = DebugConsoleController.selectionList[index];
+            DebugConsoleController.SelectObject(selectObjectInfo);
         }
     }
 }
