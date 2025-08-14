@@ -8,13 +8,13 @@ namespace Lugu.Console
 {
     public class DebugConsoleMethods : MonoBehaviour
     {
-        [DebugMethod("TIME_SCALE", "Changes the Time Scale of the game")]
+        [DebugMethod("time_scale", "Changes the Time Scale of the game")]
         public static void SetTimeScale(float timeScale)
         {
             Time.timeScale = timeScale;
         }
 
-        [DebugMethod("HELP", "Show all available static methods")]
+        [DebugMethod("help", "Show all available static methods")]
         public static void ConsoleHelp()
         {
             List<string> commandsStrings= new List<string>();
@@ -38,7 +38,7 @@ namespace Lugu.Console
             DebugConsoleController.extraText = commandsStrings.ToArray(); 
         }
 
-        [DebugMethod("HELP_SEARCH", "Shows the list of classes that can be searched with the Search method")]
+        [DebugMethod("help_search", "Shows the list of classes that can be searched with the Search method")]
         public static void SearchHelp()
         {
             List<string> classesStrings = new List<string>();
@@ -56,7 +56,7 @@ namespace Lugu.Console
             DebugConsoleController.extraText = classesStrings.ToArray();
         }
 
-        [DebugMethod("SEARCH", "Search for an instance type")]
+        [DebugMethod("search", "Search for an instance type")]
         public static void Search(string typeName)
         {
             List<Type> classesList = new List<Type>(DebugConsoleController.classCommands.Keys);
@@ -105,7 +105,7 @@ namespace Lugu.Console
             
         }
 
-        [DebugMethod("CHOOSE", "Chooses an instance from the search list")]
+        [DebugMethod("choose", "Chooses an instance from the search list")]
         public static void Choose(int index)
         {
             if(DebugConsoleController.selectionList == null)
@@ -121,15 +121,10 @@ namespace Lugu.Console
             DebugConsoleController.SelectObject(selectObjectInfo);
         }
 
-        [DebugMethod("LOAD_SCENE", "Loads a scene using the build index")]
+        [DebugMethod("load_scene", "Loads a scene using the build index")]
         public static void LoadScene(int index)
         {
             SceneManager.LoadScene(index);
-        }
-        [DebugMethod("DESTROY", "Destroys the selected object")]
-        public static void Destroy()
-        {
-
         }
 
     }
