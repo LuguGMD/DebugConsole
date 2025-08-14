@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Lugu.Console
 {
@@ -119,5 +120,17 @@ namespace Lugu.Console
             DebugConsoleController.SelectObjectInfo selectObjectInfo = DebugConsoleController.selectionList[index];
             DebugConsoleController.SelectObject(selectObjectInfo);
         }
+
+        [DebugMethod("LOAD_SCENE", "Loads a scene using the build index")]
+        public static void LoadScene(int index)
+        {
+            SceneManager.LoadScene(index);
+        }
+        [DebugMethod("DESTROY", "Destroys the selected object")]
+        public static void Destroy()
+        {
+
+        }
+
     }
 }

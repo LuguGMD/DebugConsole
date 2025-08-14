@@ -12,6 +12,8 @@ namespace Lugu.Console
 {
     public class DebugConsoleController : MonoBehaviour
     {
+        private static DebugConsoleController m_instance;
+
         private static List<DebugCommandBase> m_commandList = new List<DebugCommandBase>(); //List of static commands
         private static Dictionary<Type, List<DebugCommandBase>> m_classCommands = new Dictionary<Type, List<DebugCommandBase>>();
         private static List<DebugCommandInfo> m_expoxedCommands;
@@ -92,6 +94,19 @@ namespace Lugu.Console
         }
 
         #endregion
+
+        private void Awake()
+        {
+            if(m_instance == null)
+            {
+                m_instance = this;
+                DontDestroyOnLoad(m_instance);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
 
         private void Start()
         {
