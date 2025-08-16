@@ -42,7 +42,7 @@ jobs:
           - name: Download Build Artifact
             uses: actions/download-artifact@v4
             with:
-              name: MyUnityBuild
+              name: Build-${{ matrix.targetPlatform }}
               path: build/${{ matrix.targetPlatform }} # Local directory to store downloaded artifact
 
           - name: Send Email with Build
@@ -55,4 +55,4 @@ jobs:
               subject: "New Build"
               to: lugo.bhz@gmail.com
               from: lugo.bhz@gmail.com
-              attachments: build/${{ matrix.targetPlatform }}/zip # Adjust path to the executable/zip
+              attachments: build/${{ matrix.targetPlatform }}/Build-${{ matrix.targetPlatform }}/zip # Adjust path to the executable/zip
