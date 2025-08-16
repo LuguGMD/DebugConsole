@@ -48,6 +48,7 @@ jobs:
         steps:
           - name: Download Build Artifact
             uses: actions/download-artifact@v4
+            id: download-step
             with:
               artifact-ids: ${{ needs.steps.upload-step.outputs.artifact-id }} 
 
@@ -61,4 +62,4 @@ jobs:
               subject: "New Build"
               to: ${{ matrix.emails }}
               from: ${{ secrets.EMAIL_USERNAME }}
-              attachments: build/${{ needs.strategy.matrix.targetPlatform }}/Build-${{ needs.strategy.matrix.targetPlatform }} # Adjust path to the executable/zip
+              attachments: ${{ steps.download-step.outputs }}.zip # Adjust path to the executable/zip
