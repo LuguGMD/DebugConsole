@@ -59,6 +59,6 @@ jobs:
               username: ${{ secrets.EMAIL_USERNAME }}
               password: ${{ secrets.EMAIL_PASSWORD }}
               subject: "New Build"
-              to: matrix.emails
-              from: lugo.bhz@gmail.com
-              attachments: build/${{ needs.strategy.matrix.targetPlatform }}/Build-${{ needs.strategy.matrix.targetPlatform }}/zip # Adjust path to the executable/zip
+              to: ${{ matrix.emails }}
+              from: ${{ secrets.EMAIL_USERNAME }}
+              attachments: build/${{ needs.strategy.matrix.targetPlatform }}/Build-${{ needs.strategy.matrix.targetPlatform }}.zip # Adjust path to the executable/zip
