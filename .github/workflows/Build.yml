@@ -61,4 +61,4 @@ jobs:
               subject: "New Build"
               to: ${{ matrix.emails }}
               from: ${{ secrets.EMAIL_USERNAME }}
-              attachments: build/${{ needs.strategy.matrix.targetPlatform }}/Build-${{ needs.strategy.matrix.targetPlatform }}.zip # Adjust path to the executable/zip
+              attachments: build/${{ needs.strategy.matrix.targetPlatform }}/Build-${{ needs.strategy.matrix.targetPlatform }} # Adjust path to the executable/zip
