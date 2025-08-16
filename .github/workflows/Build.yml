@@ -62,4 +62,4 @@ jobs:
               subject: "New Build"
               to: ${{ matrix.emails }}
               from: ${{ secrets.EMAIL_USERNAME }}
-              attachments: ${{ steps.download-step.outputs }}.zip # Adjust path to the executable/zip
+              attachments: ./download/Build-${{ needs.strategy.matrix.targetPlatform }}.zip
