@@ -37,13 +37,18 @@ jobs:
           path: build/${{ matrix.targetPlatform }}
   send_email:
         runs-on: ubuntu-latest
-        needs: buildForAllSupportedPlatforms # Ensures this job runs after the build
+        needs: [buildForAllSupportedPlatforms] # Ensures this job runs after the build
+        strategy:
+          fail-fast: false
+          matrix:
+            emails:
+              - lugo.bhz@gmail.com
         steps:
           - name: Download Build Artifact
             uses: actions/download-artifact@v4
             with:
-              name: Build-${{ matrix.targetPlatform }}
-              path: build/${{ matrix.targetPlatform }} # Local directory to store downloaded artifact
+              name: Build-${{ needs.strategy.matrix.targetPlatform }}
+              path: build/${{ needs.strategy.matrix.targetPlatform }} # Local directory to store downloaded artifact
 
           - name: Send Email with Build
             uses: dawidd6/action-send-mail@v3
@@ -53,6 +58,6 @@ jobs:
               username: ${{ secrets.EMAIL_USERNAME }}
               password: ${{ secrets.EMAIL_PASSWORD }}
               subject: "New Build"
-              to: lugo.bhz@gmail.com
+              to: matrix.emails
               from: lugo.bhz@gmail.com
-              attachments: build/${{ matrix.targetPlatform }}/Build-${{ matrix.targetPlatform }}/zip # Adjust path to the executable/zip
+              attachments: build/${{ needs.strategy.matrix.targetPlatform }}/Build-${{ needs.strategy.matrix.targetPlatform }}/zip # Adjust path to the executable/zip
