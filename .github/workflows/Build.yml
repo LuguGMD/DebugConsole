@@ -35,3 +35,24 @@ jobs:
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
+  send_email:
+        runs-on: ubuntu-latest
+        needs: buildForAllSupportedPlatforms # Ensures this job runs after the build
+        steps:
+          - name: Download Build Artifact
+            uses: actions/download-artifact@v4
+            with:
+              name: MyUnityBuild
+              path: build/${{ matrix.targetPlatform }} # Local directory to store downloaded artifact
+
+          - name: Send Email with Build
+            uses: dawidd6/action-send-mail@v3
+            with:
+              server_address: smtp.gmail.com
+              server_port: 587
+              username: ${{ secrets.EMAIL_USERNAME }}
+              password: ${{ secrets.EMAIL_PASSWORD }}
+              subject: "New Build"
+              to: lugo.bhz@gmail.com
+              from: lugo.bhz@gmail.com
+              attachments: build/${{ matrix.targetPlatform }}/zip # Adjust path to the executable/zip
