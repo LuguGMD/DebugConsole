@@ -67,9 +67,8 @@ jobs:
             uses: softprops/action-gh-release@v1
             with:
               tag_name: latest
-              files: Build-StandaloneWindows64.zip
             env:
-              GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
   send_email:
         name: Send email to ${{ matrix.emails }}
