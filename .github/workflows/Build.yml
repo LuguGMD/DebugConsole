@@ -5,8 +5,8 @@ on:
       - main
       
 env:
-  BUILD_DIR: "build/"
-  FILE_NAME: "Build-"
+  BUILD_DIR: build/
+  FILE_NAME: Build-
   RELEASE_NAME: release-${{ github.sha }} 
 
 jobs:
@@ -83,7 +83,7 @@ jobs:
           - name: Zip Build
             run: |
               cd download
-              zip -r ../Build-${{ matrix.targetPlatform }}.zip .
+              zip -r ../${{ env.FILE_NAME }}${{ matrix.targetPlatform }}.zip .
               
           - name: List files
             run: ls -R
