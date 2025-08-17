@@ -7,6 +7,8 @@ jobs:
   buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
+    outputs:
+      targetPlatform: ${{ matrix.targetPlatform }}
     strategy:
       fail-fast: false
       matrix:
@@ -59,7 +61,7 @@ jobs:
           - name: Zip Build
             run: |
               cd download
-              zip -r ../Build-StandaloneWindows64.zip .
+              zip -r ../Build-${{ needs.buildForAllSupportedPlatforms.outputs.targetPlatform }}.zip .
           - name: List files
             run: ls -R
             
@@ -78,8 +80,8 @@ jobs:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
               upload_url: ${{ steps.release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-              asset_path: ./Build-StandaloneWindows64.zip
-              asset_name: Build-StandaloneWindows64.zip
+              asset_path: ./Build-${{ needs.buildForAllSupportedPlatforms.outputs.targetPlatform }}.zip
+              asset_name: Build-${{ needs.buildForAllSupportedPlatforms.outputs.targetPlatform }}.zip
               asset_content_type: application/zip
             
   send_email:
@@ -92,13 +94,6 @@ jobs:
             emails:
               - lugo.bhz@gmail.com
         steps:
-          - name: Get Release Information
-            uses: joutvhu/get-release@v1
-            with:
-              tag_name: release-${{ github.sha }} # Specify the tag name of the release you want
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            
           - name: Send Email with Release Link
             uses: dawidd6/action-send-mail@v3
             with:
@@ -106,7 +101,7 @@ jobs:
               server_port: 587
               username: ${{ secrets.EMAIL_USERNAME }}
               password: ${{ secrets.EMAIL_PASSWORD }}
-              subject: "New Build"
+              subject: "New Release"
               to: ${{ matrix.emails }}
               from: ${{ secrets.EMAIL_USERNAME }}
               body: Donwload link ${{ needs.release_build.outputs.release_url }}
