@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        targetPlatform: [StandaloneWindows64, WebGL]
+        targetPlatform: [StandaloneWindows64]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -71,7 +71,7 @@ jobs:
         strategy:
           fail-fast: false
           matrix:
-            targetPlatform: [StandaloneWindows64, WebGL]
+            targetPlatform: [StandaloneWindows64]
         steps:
           - name: Download Build Artifact
             uses: actions/download-artifact@v4
@@ -106,8 +106,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        targetPlatform: [StandaloneWindows64, WebGL]
-        emails: [lugo.bhz@gmail.com]
+        targetPlatform: [StandaloneWindows64]
+        emails: [lugo.bhz@gmail.com, lugu.bhz@gmail.com]
     steps:
       - name: Send Email with Release Link
         uses: dawidd6/action-send-mail@v3
