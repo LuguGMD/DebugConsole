@@ -51,15 +51,10 @@ jobs:
             emails:
               - lugo.bhz@gmail.com
         steps:
-          - name: Download Build Artifact
-            uses: actions/download-artifact@v4
-            id: download-step
-            with:
-              artifact-ids: ${{ needs.steps.upload-step.outputs.artifact-id }}
-              path: ./download
+
           - name: Zip Build
             run: |
-              cd download
+              cd build/StandaloneWindows64
               zip -r ../Build-StandaloneWindows64.zip .
               
           - name: Upload to GitHub Release
