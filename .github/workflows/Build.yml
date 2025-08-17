@@ -46,8 +46,6 @@ jobs:
             emails:
               - lugo.bhz@gmail.com
         steps:
-          - name: Echo Info
-            run: echo ${{ needs.steps.upload-step.outputs.artifact-url }}
           - name: Send Email with Build
             uses: dawidd6/action-send-mail@v3
             with:
