@@ -5,8 +5,8 @@ on:
       - main
       
 env: &build_env
-  BUILD_DIR: "build/${{ matrix.targetPlatform }}"
-  FILE_NAME: "Build-${{ matrix.targetPlatform }}"
+  BUILD_DIR: "build/"
+  FILE_NAME: "Build-"
   TARGET_PLATFORMS: '["StandaloneWindows64","WebGL"]'
   EMAILS: '["lugo.bhz@gmail.com"]'
   RELEASE_NAME: release-${{ github.sha }} 
@@ -46,8 +46,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         id: upload-step
         with:
-          name: $FILE_NAME
-          path: $BUILD_DIR
+          name: $FILE_NAME${{ matrix.targetPlatform }}
+          path: $BUILD_DIR${{ matrix.targetPlatform }}
           
   release_build:
         env: *build_env
@@ -100,8 +100,8 @@ jobs:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
               upload_url: ${{ needs.release_build.outputs.release_url }} 
-              asset_path: ./$BUILD_DIR.zip
-              asset_name: $FILE_NAME.zip
+              asset_path: ./$BUILD_DIR.zip${{ matrix.targetPlatform }}
+              asset_name: $FILE_NAME.zip${{ matrix.targetPlatform }}
               asset_content_type: application/zip
               
   send_email:
@@ -125,6 +125,6 @@ jobs:
           subject: "New Release"
           to: ${{ matrix.emails }}
           from: ${{ secrets.EMAIL_USERNAME }}
-          body: Download link https://github.com/${{ github.repository }}/releases/download/$RELEASE_NAME/$FILE_NAME.zip
+          body: Download link https://github.com/${{ github.repository }}/releases/download/$RELEASE_NAME/$FILE_NAME${{ matrix.targetPlatform }}.zip
               
       
