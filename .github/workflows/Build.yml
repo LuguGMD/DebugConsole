@@ -5,8 +5,8 @@ on:
       - main
       
 env: &build_env
-  BUILD_DIR: build/${{ matrix.targetPlatform }}
-  FILE_NAME: Build-${{ matrix.targetPlatform }}
+  BUILD_DIR: "build/${{ matrix.targetPlatform }}"
+  FILE_NAME: "Build-${{ matrix.targetPlatform }}"
   TARGET_PLATFORMS: '["StandaloneWindows64","WebGL"]'
   EMAILS: '["lugo.bhz@gmail.com"]'
   RELEASE_NAME: release-${{ github.sha }} 
@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        targetPlatform: ${{ fromJson(env.TARGET_PLATFORMS) }}
+        targetPlatform: ${{ fromJson($TARGET_PLATFORMS) }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,8 +46,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         id: upload-step
         with:
-          name: ${{ env.FILE_NAME }}
-          path: ${{ env.BUILD_DIR }}
+          name: $FILE_NAME
+          path: $BUILD_DIR
           
   release_build:
         env: *build_env
@@ -62,7 +62,7 @@ jobs:
             id: release
             uses: softprops/action-gh-release@v1
             with:
-              tag_name: ${{ env.RELEASE_NAME }}
+              tag_name: $RELEASE_NAME
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -76,7 +76,7 @@ jobs:
         strategy:
           fail-fast: false
           matrix:
-            targetPlatform: ${{ fromJson(env.TARGET_PLATFORMS) }}
+            targetPlatform: ${{ fromJson($TARGET_PLATFORMS) }}
         steps:
           - name: Download Build Artifact
             uses: actions/download-artifact@v4
@@ -100,8 +100,8 @@ jobs:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
               upload_url: ${{ needs.release_build.outputs.release_url }} 
-              asset_path: ./${{ env.BUILD_DIR }}.zip
-              asset_name: ${{ env.FILE_NAME }}.zip
+              asset_path: ./$BUILD_DIR.zip
+              asset_name: $FILE_NAME.zip
               asset_content_type: application/zip
               
   send_email:
@@ -112,8 +112,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        targetPlatform: ${{ fromJson(env.TARGET_PLATFORMS) }}
-        emails: ${{ fromJson(env.EMAIL) }}
+        targetPlatform: ${{ fromJson($TARGET_PLATFORMS) }}
+        emails: ${{ fromJson($EMAIL) }}
     steps:
       - name: Send Email with Release Link
         uses: dawidd6/action-send-mail@v3
@@ -125,6 +125,6 @@ jobs:
           subject: "New Release"
           to: ${{ matrix.emails }}
           from: ${{ secrets.EMAIL_USERNAME }}
-          body: Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}.zip
+          body: Download link https://github.com/${{ github.repository }}/releases/download/$RELEASE_NAME/$FILE_NAME.zip
               
       
