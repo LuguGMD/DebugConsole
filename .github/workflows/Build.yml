@@ -45,6 +45,8 @@ jobs:
         permissions: write-all
         name: Release Build
         runs-on: ubuntu-latest
+        outputs:
+          release_url: ${{ steps.release.outputs.upload_url }}
         needs: [buildForAllSupportedPlatforms] # Ensures this job runs after the build
         steps:
           - name: Download Build Artifact
@@ -107,4 +109,4 @@ jobs:
               subject: "New Build"
               to: ${{ matrix.emails }}
               from: ${{ secrets.EMAIL_USERNAME }}
-              body: ${{ steps.get-release.outputs.html_url }}
+              body: Donwload link ${{ needs.release_build.outputs.release_url }}
