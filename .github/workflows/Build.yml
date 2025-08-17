@@ -51,8 +51,11 @@ jobs:
             id: download-step
             with:
               artifact-ids: ${{ needs.steps.upload-step.outputs.artifact-id }}
+              path: ./download
+            
           - name: List files
             run: ls -R
+            
           - name: Send Email with Build
             uses: dawidd6/action-send-mail@v3
             with:
@@ -66,4 +69,4 @@ jobs:
               body: |
                 A new build is available for download:
                 ${{ needs.steps.upload-step.outputs.artifact-url }}
-              attachments: ${{ needs.steps.upload-step.outputs.artifact-url }}.zip
+              attachments: ./download$/Build-${{ needs.strategy.matrix.targetPlatform }}.zip
