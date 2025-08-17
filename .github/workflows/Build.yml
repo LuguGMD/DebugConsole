@@ -79,3 +79,34 @@ jobs:
               asset_path: ./Build-StandaloneWindows64.zip
               asset_name: Build-StandaloneWindows64.zip
               asset_content_type: application/zip
+            
+  send_email:
+        name: Send email to ${{ matrix.emails }}
+        runs-on: ubuntu-latest
+        needs: [release_build] # Ensures this job runs after the build
+        strategy:
+          fail-fast: false
+          matrix:
+            emails:
+              - lugo.bhz@gmail.com
+        steps:
+          - name: Get Release Information
+            uses: joutvhu/get-release@v1
+            with:
+              tag_name: latest # Specify the tag name of the release you want
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            
+          - name: Send Email with Release Link
+            uses: dawidd6/action-send-mail@v3
+            with:
+              server_address: smtp.gmail.com
+              server_port: 587
+              username: ${{ secrets.EMAIL_USERNAME }}
+              password: ${{ secrets.EMAIL_PASSWORD }}
+              subject: "New Build"
+              to: ${{ matrix.emails }}
+              from: ${{ secrets.EMAIL_USERNAME }}
+              body: |
+                A new Unity build has been uploaded!
+                Download link: ${{ steps.get-release.outputs.html_url }}
