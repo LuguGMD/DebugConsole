@@ -65,7 +65,7 @@ jobs:
             id: release
             uses: softprops/action-gh-release@v1
             with:
-              tag_name: release-${{ github.ref }} 
+              tag_name: release-${{ github.sha }} 
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -93,7 +93,7 @@ jobs:
           - name: Get Release Information
             uses: joutvhu/get-release@v1
             with:
-              tag_name: release-${{ github.ref }} # Specify the tag name of the release you want
+              tag_name: release-${{ github.sha }} # Specify the tag name of the release you want
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
@@ -107,6 +107,4 @@ jobs:
               subject: "New Build"
               to: ${{ matrix.emails }}
               from: ${{ secrets.EMAIL_USERNAME }}
-              body: |
-                A new Unity build has been uploaded!
-                Download link: ${{ steps.get-release.outputs.html_url }}
+              body: ${{ steps.get-release.outputs.html_url }}
