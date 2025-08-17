@@ -69,4 +69,4 @@ jobs:
               body: |
                 A new build is available for download:
                 ${{ needs.steps.upload-step.outputs.artifact-url }}
-              attachments: ./download$/Build-${{ needs.strategy.matrix.targetPlatform }}.zip
+              attachments: ./download$/Build-${{ needs.buildForAllSupportedPlatforms.strategy.matrix.targetPlatform }}.zip
