@@ -7,8 +7,6 @@ on:
 env:
   BUILD_DIR: "build/"
   FILE_NAME: "Build-"
-  TARGET_PLATFORMS: '["StandaloneWindows64","WebGL"]'
-  EMAILS: '["lugo.bhz@gmail.com"]'
   RELEASE_NAME: release-${{ github.sha }} 
 
 jobs:
@@ -18,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        targetPlatform: ${{ fromJson(env.TARGET_PLATFORMS) }}
+        targetPlatform: [StandaloneWindows64, WebGL]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -73,7 +71,7 @@ jobs:
         strategy:
           fail-fast: false
           matrix:
-            targetPlatform: ${{ fromJson(${{ env.TARGET_PLATFORMS }}) }}
+            targetPlatform: [StandaloneWindows64, WebGL]
         steps:
           - name: Download Build Artifact
             uses: actions/download-artifact@v4
@@ -108,8 +106,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        targetPlatform: ${{ fromJson(${{ env.TARGET_PLATFORMS }}) }}
-        emails: ${{ fromJson(${{ env.EMAIL }}) }}
+        targetPlatform: [StandaloneWindows64, WebGL]
+        emails: [lugo.bhz@gmail.com]
     steps:
       - name: Send Email with Release Link
         uses: dawidd6/action-send-mail@v3
