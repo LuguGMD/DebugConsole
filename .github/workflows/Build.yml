@@ -46,6 +46,13 @@ jobs:
             emails:
               - lugo.bhz@gmail.com
         steps:
+          - name: Download Build Artifact
+            uses: actions/download-artifact@v4
+            id: download-step
+            with:
+              artifact-ids: ${{ needs.steps.upload-step.outputs.artifact-id }}
+          - name: List files
+            run: ls -R
           - name: Send Email with Build
             uses: dawidd6/action-send-mail@v3
             with:
@@ -56,4 +63,7 @@ jobs:
               subject: "New Build"
               to: ${{ matrix.emails }}
               from: ${{ secrets.EMAIL_USERNAME }}
+              body: |
+                A new build is available for download:
+                ${{ needs.steps.upload-step.outputs.artifact-url }}
               attachments: ${{ needs.steps.upload-step.outputs.artifact-url }}.zip
