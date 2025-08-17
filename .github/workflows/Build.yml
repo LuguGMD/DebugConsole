@@ -46,6 +46,13 @@ jobs:
         runs-on: ubuntu-latest
         needs: [buildForAllSupportedPlatforms] # Ensures this job runs after the build
         steps:
+          - name: Download Build Artifact
+            uses: actions/download-artifact@v4
+            id: download-step
+            with:
+              artifact-ids: ${{ needs.steps.upload-step.outputs.artifact-id }}
+              path: ./download
+              
           - name: List files
             run: ls -R
             
