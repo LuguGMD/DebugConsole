@@ -48,7 +48,7 @@ jobs:
         name: Release Build
         runs-on: ubuntu-latest
         outputs:
-          release_url: https://github.com/${{ github.repository_owner }}/${{ github.repository }}/releases/download/release-${{ github.sha }}/Build-${{ needs.buildForAllSupportedPlatforms.outputs.targetPlatform }}.zip
+          release_url: https://github.com/${{ github.repository }}/releases/download/release-${{ github.sha }}/Build-${{ needs.buildForAllSupportedPlatforms.outputs.targetPlatform }}.zip
         needs: [buildForAllSupportedPlatforms] # Ensures this job runs after the build
         steps:
           - name: Download Build Artifact
