@@ -62,10 +62,16 @@ jobs:
               cd download
               zip -r ../Build-StandaloneWindows64.zip .
               
-          - name: List files
-            run: ls -R
+          - name: Upload to GitHub Release
+            id: release
+            uses: softprops/action-gh-release@v1
+            with:
+              tag_name: latest
+              files: Build-StandaloneWindows64.zip
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
-          - name: Send Email with Build
+          - name: Send Email with Release Link
             uses: dawidd6/action-send-mail@v3
             with:
               server_address: smtp.gmail.com
@@ -75,4 +81,6 @@ jobs:
               subject: "New Build"
               to: ${{ matrix.emails }}
               from: ${{ secrets.EMAIL_USERNAME }}
-              attachments: ./Build-StandaloneWindows64.zip
+              body: |
+                A new Unity build has been uploaded!
+                Download link: ${{ steps.release.outputs.upload_url }}
