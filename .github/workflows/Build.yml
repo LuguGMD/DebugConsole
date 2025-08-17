@@ -51,6 +51,7 @@ jobs:
             id: download-step
             with:
               artifact-ids: ${{ needs.steps.upload-step.outputs.artifact-id }}
+              name: Build
               path: ./download
             
           - name: List files
@@ -69,4 +70,4 @@ jobs:
               body: |
                 A new build is available for download:
                 ${{ needs.steps.upload-step.outputs.artifact-url }}
-              attachments: ./download/Build-StandaloneWindows64.zip
+              attachments: ./download/Build.zip
