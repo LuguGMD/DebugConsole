@@ -42,6 +42,7 @@ jobs:
           path: build/${{ matrix.targetPlatform }}
           
   release_build:
+        permissions: write-all
         name: Release Build
         runs-on: ubuntu-latest
         needs: [buildForAllSupportedPlatforms] # Ensures this job runs after the build
