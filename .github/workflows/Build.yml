@@ -4,7 +4,7 @@ on:
     branches:
       - main
       
-env:
+env: &build_env
   BUILD_DIR: build/${{ matrix.targetPlatform }}
   FILE_NAME: Build-${{ matrix.targetPlatform }}
   TARGET_PLATFORMS: '["StandaloneWindows64","WebGL"]'
@@ -13,6 +13,7 @@ env:
 
 jobs:
   buildForAllSupportedPlatforms:
+    env: *build_env
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
     strategy:
@@ -49,6 +50,7 @@ jobs:
           path: ${{ env.BUILD_DIR }}
           
   release_build:
+        env: *build_env
         permissions: write-all
         name: Release Build
         runs-on: ubuntu-latest
@@ -67,6 +69,7 @@ jobs:
           
 
   upload_files:
+        env: *build_env
         name: Upload ${{ matrix.targetPlatform }} zip to Release
         runs-on: ubuntu-latest
         needs: [release_build] # Ensures this job runs after the build
@@ -74,7 +77,6 @@ jobs:
           fail-fast: false
           matrix:
             targetPlatform: ${{ fromJson(env.TARGET_PLATFORMS) }}
-            emails: ${{ fromJson(env.EMAIL) }}
         steps:
           - name: Download Build Artifact
             uses: actions/download-artifact@v4
@@ -102,15 +104,27 @@ jobs:
               asset_name: ${{ env.FILE_NAME }}.zip
               asset_content_type: application/zip
               
-          - name: Send Email with Release Link
-            uses: dawidd6/action-send-mail@v3
-            with:
-              server_address: smtp.gmail.com
-              server_port: 587
-              username: ${{ secrets.EMAIL_USERNAME }}
-              password: ${{ secrets.EMAIL_PASSWORD }}
-              subject: "New Release"
-              to: ${{ matrix.emails }}
-              from: ${{ secrets.EMAIL_USERNAME }}
-              body: Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}.zip
-        
+  send_email:
+    env: *build_env
+    name: Send email to ${{ matrix.emails }}
+    runs-on: ubuntu-latest
+    needs: [release_build] # Ensures this job runs after the build
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform: ${{ fromJson(env.TARGET_PLATFORMS) }}
+        emails: ${{ fromJson(env.EMAIL) }}
+    steps:
+      - name: Send Email with Release Link
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "New Release"
+          to: ${{ matrix.emails }}
+          from: ${{ secrets.EMAIL_USERNAME }}
+          body: Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}.zip
+              
+      
