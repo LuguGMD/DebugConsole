@@ -35,16 +35,11 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
 
-      - name: Zip Build
-        run: |
-          cd build/${{ matrix.targetPlatform }}
-          zip -r ../../Build-${{ matrix.targetPlatform }}.zip .
-          
       - uses: actions/upload-artifact@v4
         id: upload-step
         with:
           name: Build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.targetPlatform }}.zip
+          path: build/${{ matrix.targetPlatform }}
           
   send_email:
         name: Send email to ${{ matrix.emails }}
@@ -62,7 +57,11 @@ jobs:
             with:
               artifact-ids: ${{ needs.steps.upload-step.outputs.artifact-id }}
               path: ./download
-            
+          - name: Zip Build
+            run: |
+              cd download
+              zip -r ../Build-StandaloneWindows64.zip .
+              
           - name: List files
             run: ls -R
             
@@ -76,4 +75,4 @@ jobs:
               subject: "New Build"
               to: ${{ matrix.emails }}
               from: ${{ secrets.EMAIL_USERNAME }}
-              attachments: ./download/Build-StandaloneWindows64.zip
+              attachments: ./Build-StandaloneWindows64.zip
