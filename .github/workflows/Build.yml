@@ -46,6 +46,8 @@ jobs:
         name: Release Build
         runs-on: ubuntu-latest
         needs: [buildForAllSupportedPlatforms] # Ensures this job runs after the build
+        outputs:
+          release_url: ${{ steps.release.outputs.upload_url }}
         steps:
           - name: Download Build Artifact
             uses: actions/download-artifact@v4
@@ -102,4 +104,4 @@ jobs:
               from: ${{ secrets.EMAIL_USERNAME }}
               body: |
                 A new Unity build has been uploaded!
-                Download link: ${{ needs.release_build.steps.release.outputs.upload_url }}
+                Download link: ${{ needs.release_build.outputs.release_url }}
