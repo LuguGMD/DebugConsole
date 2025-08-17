@@ -44,7 +44,7 @@ jobs:
         id: upload-step
         with:
           name: Build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}.zip
           
   send_email:
         name: Send email to ${{ matrix.emails }}
