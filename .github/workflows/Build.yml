@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        targetPlatform: ${{ fromJson(${{ env.TARGET_PLATFORMS }}) }}
+        targetPlatform: ${{ fromJson(env.TARGET_PLATFORMS) }}
     steps:
       - uses: actions/checkout@v4
         with:
