@@ -23,7 +23,7 @@ jobs:
       - name: Build string
         id: build-string
         run: |
-            echo BODY = "$BODY \r\n${{ matrix.targetPlatform }} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${{ matrix.targetPlatform }}.zip" >> $GITHUB_ENV
+            echo BODY = "$BODY \r\n${{ matrix.targetPlatform }} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${{ matrix.targetPlatform }}.zip"
             # Expose BODY as an output
             echo "email_body<<EOF" >> $GITHUB_OUTPUT
             echo -e "$BODY" >> $GITHUB_OUTPUT
