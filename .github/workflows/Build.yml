@@ -98,7 +98,7 @@ jobs:
         id: build-string
         run: |
           BODY=""
-          for PLATFORM in StandaloneWindows64 WebGL
+          for PLATFORM in StandaloneWindows64
           do
             BODY="$BODY\n$PLATFORM Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/Build-${PLATFORM}.zip"
           done
