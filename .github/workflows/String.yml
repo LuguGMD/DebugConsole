@@ -14,20 +14,20 @@ jobs:
     name: Generate Email Body
     runs-on: ubuntu-latest
     outputs:
-      email-body: ${{ steps.build-string.outputs.email_body }}
-    strategy:
-      fail-fast: false
-      matrix:
-        targetPlatform: [StandaloneWindows64]
+      email_body: ${{ steps.build-string.outputs.email_body }}
     steps:
       - name: Build string
         id: build-string
         run: |
-            echo BODY = "$BODY \r\n${{ matrix.targetPlatform }} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${{ matrix.targetPlatform }}.zip"
-            # Expose BODY as an output
-            echo "email_body<<EOF" >> $GITHUB_OUTPUT
-            echo -e "$BODY" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+          BODY=""
+          for PLATFORM in StandaloneWindows64 WebGL
+          do
+            BODY="$BODY\n$PLATFORM Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/Build-${PLATFORM}.zip"
+          done
+          # Expose BODY as an output
+          echo "email_body<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
   send_email:
     name: Send email to ${{ matrix.emails }}
     runs-on: ubuntu-latest
