@@ -107,7 +107,7 @@ jobs:
             echo env.MY_STRING = "${{ env.MY_STRING }} \r\n$platform Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}$platform.zip"
           done
           
-          echo "FINAL_STRING=$env.MY_STRING" >> $GITHUB_ENV # Make it available to subsequent steps
+          echo "FINAL_STRING= ${{ env.MY_STRING }}" >> $GITHUB_ENV # Make it available to subsequent steps
           
       
       - name: Send Email with Release Link
