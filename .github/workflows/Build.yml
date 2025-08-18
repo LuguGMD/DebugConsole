@@ -97,16 +97,18 @@ jobs:
         emails: [lugo.bhz@gmail.com]
         
     steps:
-      - name: Initialize and build string
+      - name: Initialize strings
         run: |
-          MY_STRING=""
-          PLATFORMS=("StandaloneWindows64") # Define your items
-          
-          for platform in "${PLATFORMS[@]}"; do
-            MY_STRING = ${MY_STRING} \r\n${platform} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${platform}.zip
+          echo MY_STRING="" >> $GITHUB_ENV
+          echo PLATFORMS=("StandaloneWindows64") >> $GITHUB_ENV
+      - name: Build strings
+        run: |
+          for platform in "${env.PLATFORMS[@]}"; do
+            echo env.MY_STRING = ${env.MY_STRING} \r\n${platform} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${platform}.zip
           done
           
-          echo "FINAL_STRING=$MY_STRING" >> $GITHUB_ENV # Make it available to subsequent steps
+          echo "FINAL_STRING=$env.MY_STRING" >> $GITHUB_ENV # Make it available to subsequent steps
+          
       
       - name: Send Email with Release Link
         uses: dawidd6/action-send-mail@v3
