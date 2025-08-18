@@ -13,14 +13,21 @@ jobs:
   generate_email_body:
     name: Generate Email Body
     runs-on: ubuntu-latest
+    outputs:
+      email-body: ${{ steps.build-string.outputs.email_body }}
     strategy:
       fail-fast: false
       matrix:
         targetPlatform: [StandaloneWindows64]
     steps:
       - name: Build string
+        id: build-string
         run: |
-            echo env.MY_STRING = "${{ env.MY_STRING }} \r\n${{ matrix.targetPlatform }} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${{ matrix.targetPlatform }}.zip" >> $GITHUB_ENV
+            echo BODY = "$BODY \r\n${{ matrix.targetPlatform }} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${{ matrix.targetPlatform }}.zip" >> $GITHUB_ENV
+            # Expose BODY as an output
+            echo "email_body<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$BODY" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
   send_email:
     name: Send email to ${{ matrix.emails }}
     runs-on: ubuntu-latest
@@ -42,6 +49,6 @@ jobs:
           subject: "New Release"
           to: ${{ matrix.emails }}
           from: ${{ secrets.EMAIL_USERNAME }}
-          body: ${{ env.MY_STRING }}
+          body: ${{ needs.generate_email_body.outputs.email_body }}
               
       
