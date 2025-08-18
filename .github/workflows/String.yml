@@ -10,26 +10,27 @@ env:
   RELEASE_NAME: release-${{ github.sha }} 
 
 jobs:
-              
+  generate_email_body:
+    name: Generate Email Body
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform: [StandaloneWindows64]
+    steps:
+      - name: Build string
+        run: |
+            echo env.MY_STRING = "${{ env.MY_STRING }} \r\n${{ matrix.targetPlatform }} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${{ matrix.targetPlatform }}.zip" >> $GITHUB_ENV
   send_email:
     name: Send email to ${{ matrix.emails }}
     runs-on: ubuntu-latest
+    needs: [generate_email_body]
     strategy:
       fail-fast: false
       matrix:
         emails: [lugo.bhz@gmail.com]
         
     steps:
-      - name: Initialize strings
-        run: |
-          echo MY_STRING="" >> $GITHUB_ENV
-      - name: Build strings
-        run: |
-          for platform in StandaloneWindows64
-          do
-            echo env.MY_STRING = "${{ env.MY_STRING }} \r\n$platform Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}$platform.zip" >> $GITHUB_ENV
-          done
-          
       
       - name: Send Email with Release Link
         uses: dawidd6/action-send-mail@v3
