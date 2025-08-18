@@ -103,8 +103,7 @@ jobs:
           PLATFORMS=("StandaloneWindows64") # Define your items
           
           for platform in "${PLATFORMS[@]}"; do
-
-            MY_STRING = ${MY_STRING} ${platform} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${platform}.zip
+            MY_STRING = ${MY_STRING} \r\n${platform} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${platform}.zip
           done
           
           echo "FINAL_STRING=$MY_STRING" >> $GITHUB_ENV # Make it available to subsequent steps
