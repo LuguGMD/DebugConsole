@@ -87,26 +87,35 @@ jobs:
               asset_name: ${{ env.FILE_NAME }}${{ matrix.targetPlatform }}.zip
               asset_content_type: application/zip
               
+  generate_email_body:
+    name: Generate Email Body
+    runs-on: ubuntu-latest
+    needs: [upload_files]
+    outputs:
+      email_body: ${{ steps.build-string.outputs.email_body }}
+    steps:
+      - name: Build string
+        id: build-string
+        run: |
+          BODY=""
+          for PLATFORM in StandaloneWindows64 WebGL
+          do
+            BODY="$BODY\n$PLATFORM Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/Build-${PLATFORM}.zip"
+          done
+          # Expose BODY as an output
+          echo "email_body<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
   send_email:
     name: Send email to ${{ matrix.emails }}
     runs-on: ubuntu-latest
-    needs: [upload_files] # Ensures this job runs after the build
+    needs: [generate_email_body]
     strategy:
       fail-fast: false
       matrix:
         emails: [lugo.bhz@gmail.com]
         
     steps:
-      - name: Initialize strings
-        run: |
-          echo MY_STRING="" >> $GITHUB_ENV
-      - name: Build strings
-        run: |
-          for platform in StandaloneWindows64
-          do
-            echo env.MY_STRING = "${{ env.MY_STRING }} \r\n$platform Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}$platform.zip" >> $GITHUB_ENV
-          done
-          
       
       - name: Send Email with Release Link
         uses: dawidd6/action-send-mail@v3
@@ -118,6 +127,7 @@ jobs:
           subject: "New Release"
           to: ${{ matrix.emails }}
           from: ${{ secrets.EMAIL_USERNAME }}
-          body: ${{ env.MY_STRING }}
+          body: ${{ needs.generate_email_body.outputs.email_body }}
               
+      
       
