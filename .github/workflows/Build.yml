@@ -67,9 +67,6 @@ jobs:
             run: |
               cd download
               zip -r ../${{ env.FILE_NAME }}${{ matrix.targetPlatform }}.zip .
-              
-          - name: List files
-            run: ls -R
             
           - name: Upload to GitHub Release
             id: release
@@ -97,9 +94,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        targetPlatform: [StandaloneWindows64]
         emails: [lugo.bhz@gmail.com]
+        
     steps:
+      - name: Initialize and build string
+        run: |
+          MY_STRING=""
+          PLATFORMS=("StandaloneWindows64") # Define your items
+          
+          for platform in "${PLATFORMS[@]}"; do
+
+            MY_STRING = ${MY_STRING} ${platform} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${platform}.zip
+          done
+          
+          echo "FINAL_STRING=$MY_STRING" >> $GITHUB_ENV # Make it available to subsequent steps
+      
       - name: Send Email with Release Link
         uses: dawidd6/action-send-mail@v3
         with:
@@ -110,6 +119,6 @@ jobs:
           subject: "New Release"
           to: ${{ matrix.emails }}
           from: ${{ secrets.EMAIL_USERNAME }}
-          body: Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${{ matrix.targetPlatform }}.zip
+          body: ${{ env.FINAL_STRING }}
               
       
