@@ -100,10 +100,10 @@ jobs:
       - name: Initialize strings
         run: |
           echo MY_STRING="" >> $GITHUB_ENV
-          echo PLATFORMS=("StandaloneWindows64") >> $GITHUB_ENV
       - name: Build strings
         run: |
-          for platform in "${env.PLATFORMS[@]}"; do
+          for platform in StandaloneWindows64 
+          do
             echo env.MY_STRING = ${env.MY_STRING} \r\n${platform} Download link https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_NAME }}/${{ env.FILE_NAME }}${platform}.zip
           done
           
