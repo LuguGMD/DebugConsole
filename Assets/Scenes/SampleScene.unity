@@ -815,7 +815,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -3268314134424457260, guid: abb98687414985142a88074c40521a2a, type: 3}
       propertyPath: m_debugGroups.Array.data[0].isEnabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -3268314134424457260, guid: abb98687414985142a88074c40521a2a, type: 3}
       propertyPath: m_debugGroups.Array.data[1].isEnabled

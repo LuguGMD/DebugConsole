@@ -30,7 +30,7 @@ namespace Lugu.Utils.Debug
             base.Awake();
 
 
-            UpdateDebugGroups();
+            LogUpdateDebugGroups();
         }
 
         public bool HasGroup(string groupName)
@@ -40,12 +40,12 @@ namespace Lugu.Utils.Debug
         }
 
         [ContextMenu("Update Groups")]
-        public void UpdateDebugGroups()
+        public void LogUpdateDebugGroups()
         {
             for (int i = 0; i < m_debugGroups.Count; i++)
             {
                 DebugGroup group = m_debugGroups[i];
-                m_groupStatus[DebugUtil.CleanText(group.name)] = group.isEnabled;
+                m_groupStatus[DebugLogger.LogCleanText(group.name)] = group.isEnabled;
             }
         }
 

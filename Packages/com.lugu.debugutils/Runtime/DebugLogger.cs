@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Lugu.Utils.Debug
 {
-    public static class DebugUtil
+    public static class DebugLogger
     {
         #region Styles
         public readonly static DebugStyle DefaultStyle = new DebugStyle()
@@ -46,37 +46,38 @@ namespace Lugu.Utils.Debug
         #endregion
 
         #region Log
-
+        [HideInCallstack]
         public static void Log(object message, DebugStyle style, params string[] groupName)
         {
             for (int i = 0; i < groupName.Length; i++)
             {
-                if (HasGroup(groupName[i]))
+                if (LogHasGroup(groupName[i]))
                 {
-                    Log($"{ApplyStyle(message, style)}");
+                    Log($"{LogApplyStyle(message, style)}");
                     return;
                 }
             }
         }
-
+        [HideInCallstack]
         public static void Log(object message, params string[] groupName)
         {
             for (int i = 0; i < groupName.Length; i++)
             {
-                if (HasGroup(groupName[i]))
+                if (LogHasGroup(groupName[i]))
                 {
                     Log($"{message}");
                     return;
                 }
             }
         }
-
+        [HideInCallstack]
         public static void Log(object message, string groupName)
         {
-            if (HasGroup(groupName))
+            if (LogHasGroup(groupName))
                 Log($"{message}");
         }
-
+        [HideInCallstack]
+        [DebuggerHidden]
         private static void Log(object message)
         {
             UnityEngine.Debug.Log($"{message}");
@@ -85,37 +86,37 @@ namespace Lugu.Utils.Debug
         #endregion
 
         #region LogWarning
-
+        [HideInCallstack]
         public static void LogWarning(object message, DebugStyle style, params string[] groupName)
         {
             for (int i = 0; i < groupName.Length; i++)
             {
-                if (HasGroup(groupName[i]))
+                if (LogHasGroup(groupName[i]))
                 {
-                    LogWarning($"{ApplyStyle(message, style)}");
+                    LogWarning($"{LogApplyStyle(message, style)}");
                     return;
                 }
             }
         }
-
+        [HideInCallstack]
         public static void LogWarning(object message, params string[] groupName)
         {
             for (int i = 0; i < groupName.Length; i++)
             {
-                if (HasGroup(groupName[i]))
+                if (LogHasGroup(groupName[i]))
                 {
                     LogWarning($"{message}");
                     return;
                 }
             }
         }
-
+        [HideInCallstack]
         public static void LogWarning(object message, string groupName)
         {
-            if (HasGroup(groupName))
+            if (LogHasGroup(groupName))
                 LogWarning($"{message}");
         }
-
+        [HideInCallstack]
         private static void LogWarning(object message)
         {
             UnityEngine.Debug.LogWarning($"{message}");
@@ -125,57 +126,58 @@ namespace Lugu.Utils.Debug
 
         #region LogError
 
+        [HideInCallstack]
         public static void LogError(object message, DebugStyle style, params string[] groupName)
         {
             for (int i = 0; i < groupName.Length; i++)
             {
-                if (HasGroup(groupName[i]))
+                if (LogHasGroup(groupName[i]))
                 {
-                    LogError($"{ApplyStyle(message, style)}");
+                    LogError($"{LogApplyStyle(message, style)}");
                     return;
                 }
             }
         }
-
+        [HideInCallstack]
         public static void LogError(object message, params string[] groupName)
         {
             for (int i = 0; i < groupName.Length; i++)
             {
-                if (HasGroup(groupName[i]))
+                if (LogHasGroup(groupName[i]))
                 {
                     LogError($"{message}");
                     return;
                 }
             }
         }
-
+        [HideInCallstack]
         public static void LogError(object message, string groupName)
         {
-            if (HasGroup(groupName))
+            if (LogHasGroup(groupName))
                 LogError($"{message}");
         }
-
+        [HideInCallstack]
         private static void LogError(object message)
         {
             UnityEngine.Debug.LogError($"{message}");
         }
 
         #endregion
-
-        private static bool HasGroup(string groupName)
+        [HideInCallstack]
+        private static bool LogHasGroup(string groupName)
         {
             if (DebugController.Instance == null)
                 return false;
 
-            return DebugController.Instance.HasGroup(CleanText(groupName));
+            return DebugController.Instance.HasGroup(LogCleanText(groupName));
         }
-
-        public static string CleanText(string text)
+        [HideInCallstack]
+        public static string LogCleanText(string text)
         {
             return text.Replace(" ", "").ToLower();
         }
-
-        private static object ApplyStyle(object message, DebugStyle style)
+        [HideInCallstack]
+        private static object LogApplyStyle(object message, DebugStyle style)
         {
             return $"<color=#{ColorUtility.ToHtmlStringRGB(style.color)}><size={style.size}>{message}</color=#{ColorUtility.ToHtmlStringRGB(style.color)}></size={style.size}>";
         }

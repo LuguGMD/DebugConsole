@@ -28,7 +28,7 @@ namespace Lugu.Utils.Debug
             if(m_debugControllerSO.ApplyModifiedProperties() && EditorApplication.isPlaying)
             {
                 Undo.RecordObject(m_debugController, "Debug Groups Modified");
-                m_debugController.UpdateDebugGroups();
+                m_debugController.LogUpdateDebugGroups();
             }
         }
     }
